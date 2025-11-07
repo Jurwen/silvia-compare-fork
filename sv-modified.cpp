@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     Eigen::MatrixXd U;
     Eigen::MatrixXi G;
     auto starterTime = std::chrono::high_resolution_clock::now();
-    swept_volume(V, F, argv[2], 100, "sphereLoopDLoop", U, G);
+    swept_volume(V, F, argv[2], 100, "flippingDonut_SDF", U, G);
     auto stopperTime = std::chrono::high_resolution_clock::now();
     auto start = std::chrono::time_point_cast<std::chrono::microseconds>(starterTime).time_since_epoch().count();
     auto end = std::chrono::time_point_cast<std::chrono::microseconds>(stopperTime).time_since_epoch().count();

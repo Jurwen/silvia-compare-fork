@@ -59,23 +59,23 @@ void swept_volume(const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Ei
     };
     
     
-//    Eigen::VectorXd time_keyframes;
-//    time_keyframes.setLinSpaced(Transformations.size(),0.0,1.0);
-//    std::vector<Eigen::RowVector3d> tangents;
-//    double tau = time_keyframes(1);
-//    Eigen::RowVector3d running_tan;
-//    for (int mm = 0; mm < Transformations.size(); mm++) {
-//        if (mm == 0) {
-//            running_tan << (Transformations[1](0,3) - Transformations[0](0,3))/(1.0), (Transformations[1](1,3) - Transformations[0](1,3))/(1.0), (Transformations[1](2,3) - Transformations[0](2,3))/(1.0);
-//            tangents.push_back(running_tan);
-//        }else if (mm == Transformations.size()-1) {
-//            running_tan << (Transformations[Transformations.size()-1](0,3) - Transformations[Transformations.size()-2](0,3))/(1.0), (Transformations[Transformations.size()-1](1,3) - Transformations[Transformations.size()-2](1,3))/(1.0), (Transformations[Transformations.size()-1](2,3) - Transformations[Transformations.size()-2](2,3))/(1.0);
-//            tangents.push_back(running_tan);
-//        }else{
-//            running_tan << (Transformations[mm+1](0,3) - Transformations[mm-1](0,3))/(2.0), (Transformations[mm+1](1,3) - Transformations[mm-1](1,3))/(2.0), (Transformations[mm+1](2,3) - Transformations[mm-1](2,3))/(2.0);
-//            tangents.push_back(running_tan);
-//        }
-//    }
+    //    Eigen::VectorXd time_keyframes;
+    //    time_keyframes.setLinSpaced(Transformations.size(),0.0,1.0);
+    //    std::vector<Eigen::RowVector3d> tangents;
+    //    double tau = time_keyframes(1);
+    //    Eigen::RowVector3d running_tan;
+    //    for (int mm = 0; mm < Transformations.size(); mm++) {
+    //        if (mm == 0) {
+    //            running_tan << (Transformations[1](0,3) - Transformations[0](0,3))/(1.0), (Transformations[1](1,3) - Transformations[0](1,3))/(1.0), (Transformations[1](2,3) - Transformations[0](2,3))/(1.0);
+    //            tangents.push_back(running_tan);
+    //        }else if (mm == Transformations.size()-1) {
+    //            running_tan << (Transformations[Transformations.size()-1](0,3) - Transformations[Transformations.size()-2](0,3))/(1.0), (Transformations[Transformations.size()-1](1,3) - Transformations[Transformations.size()-2](1,3))/(1.0), (Transformations[Transformations.size()-1](2,3) - Transformations[Transformations.size()-2](2,3))/(1.0);
+    //            tangents.push_back(running_tan);
+    //        }else{
+    //            running_tan << (Transformations[mm+1](0,3) - Transformations[mm-1](0,3))/(2.0), (Transformations[mm+1](1,3) - Transformations[mm-1](1,3))/(2.0), (Transformations[mm+1](2,3) - Transformations[mm-1](2,3))/(2.0);
+    //            tangents.push_back(running_tan);
+    //        }
+    //    }
     
     // Position function (Catmull-Rom spline)
     std::function<bool(const double,
@@ -87,77 +87,77 @@ void swept_volume(const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Ei
                                                                       Eigen::RowVector3d & vt,
                                                                       Eigen::Matrix3d & Rt,
                                                                       Eigen::Matrix3d & VRt)->bool{
-//                           Eigen::RowVector3d x0, x1, x2, x3, v0, v1, v2;
-//                           int a, b;
-//                           b = floor(t*(Transformations.size() - 1.0));
-//                           if (t==1.0) {
-//                               b = b-1;
-//                           }
-//                           double tt = (t-time_keyframes(b))/(tau);
-//                           x0 << Transformations[b](0,3),  Transformations[b](1,3),  Transformations[b](2,3);
-//                           x1 << Transformations[b+1](0,3),  Transformations[b+1](1,3),  Transformations[b+1](2,3);
-//                           xt = (2.0*pow(tt,3.0) - 3.0*pow(tt,2.0) + 1.0)*x0 + (pow(tt,3.0) - 2.0*pow(tt,2.0) + tt)*tangents[b] + (-2.0*pow(tt,3.0) + 3.0*pow(tt,2.0))*x1 + (pow(tt,3.0) - pow(tt,2.0))*tangents[b+1];
-//                           vt = (6.0*pow(tt,2.0) - 6.0*tt)*x0 + (3.0*pow(tt,2.0) - 4.0*tt + 1.0)*tangents[b] + (-6.0*pow(tt,2.0) + 6.0*tt)*x1 + (3.0*pow(tt,2.0) - 2.0*tt)*tangents[b+1];
-//                           vt = vt/tau;
-//                           
-//                           Eigen::Matrix3d R0, R1;
-//                           R0 = Transformations[b].topLeftCorner(3,3);
-//                           R1 = Transformations[b+1].topLeftCorner(3,3);
-//                           
-//                           // scale
-//                           Eigen::Matrix3d S0, S1, St,VSt;
-//                           S0.setZero();
-//                           S1.setZero();
-//                           S0(0,0) = R0.col(0).norm();
-//                           S0(1,1) = R0.col(1).norm();
-//                           S0(2,2) = R0.col(2).norm();
-//                           S1(0,0) = R1.col(0).norm();
-//                           S1(1,1) = R1.col(1).norm();
-//                           S1(2,2) = R1.col(2).norm();
-//                           St = S1 + (1.0-tt)*(S0-S1);
-//                           // rotation
-//                           
-//                           R0 = R0*S0.inverse();
-//                           R1 = R1*S1.inverse();
-//                           Eigen::Quaterniond q0(R0);
-//                           
-//                           Eigen::Quaterniond q1(R1);
-//                           q1.normalize();
-//                           q0.normalize();
-//                           Eigen::Quaterniond qt = q0.slerp(tt,q1);
-//                           Rt = qt.toRotationMatrix();
-//                           if (q0.dot(q1) < 0) {
-//                               q1.coeffs() = -q1.coeffs();
-//                           }
-//                           Eigen::Quaterniond qs = q0.conjugate() * q1;
-//                           Eigen::Quaterniond qvt = qt * logq(qs);
-//                           
-//                           
-//                           double qr, qi, qj, qk;
-//                           Eigen::Matrix3d Rr, Ri, Rj, Rk;
-//                           qr = qt.w();
-//                           qi = qt.x();
-//                           qj = qt.y();
-//                           qk = qt.z();
-//                           Rr << 0, -2*qk, 2*qj,
-//                           2*qk, 0, -2*qi,
-//                           -2*qj, 2*qi, 0;
-//                           Rk << -4*qk, -2*qr, 2*qi,
-//                           2*qr, -4*qk, 2*qj,
-//                           2*qi, 2*qj, 0;
-//                           Rj << -4*qj, 2*qi, 2*qr,
-//                           2*qi, 0, 2*qk,
-//                           -2*qr, 2*qk, -4*qj;
-//                           Ri << 0, 2*qj, 2*qk,
-//                           2*qj, -4*qi, -2*qr,
-//                           2*qk, 2*qr, -4*qi;
-//                           VRt = Rr*qvt.w() + Ri*qvt.x() + Rj*qvt.y() + Rk*qvt.z();
-//                           VRt = VRt / tau;
-//                           VSt = (S1-S0)/tau;
-//                           
-//                           // Scaling
-//                           Rt = Rt * St;
-//                           VRt = VRt * St + Rt * VSt;
+                           //                           Eigen::RowVector3d x0, x1, x2, x3, v0, v1, v2;
+                           //                           int a, b;
+                           //                           b = floor(t*(Transformations.size() - 1.0));
+                           //                           if (t==1.0) {
+                           //                               b = b-1;
+                           //                           }
+                           //                           double tt = (t-time_keyframes(b))/(tau);
+                           //                           x0 << Transformations[b](0,3),  Transformations[b](1,3),  Transformations[b](2,3);
+                           //                           x1 << Transformations[b+1](0,3),  Transformations[b+1](1,3),  Transformations[b+1](2,3);
+                           //                           xt = (2.0*pow(tt,3.0) - 3.0*pow(tt,2.0) + 1.0)*x0 + (pow(tt,3.0) - 2.0*pow(tt,2.0) + tt)*tangents[b] + (-2.0*pow(tt,3.0) + 3.0*pow(tt,2.0))*x1 + (pow(tt,3.0) - pow(tt,2.0))*tangents[b+1];
+                           //                           vt = (6.0*pow(tt,2.0) - 6.0*tt)*x0 + (3.0*pow(tt,2.0) - 4.0*tt + 1.0)*tangents[b] + (-6.0*pow(tt,2.0) + 6.0*tt)*x1 + (3.0*pow(tt,2.0) - 2.0*tt)*tangents[b+1];
+                           //                           vt = vt/tau;
+                           //
+                           //                           Eigen::Matrix3d R0, R1;
+                           //                           R0 = Transformations[b].topLeftCorner(3,3);
+                           //                           R1 = Transformations[b+1].topLeftCorner(3,3);
+                           //
+                           //                           // scale
+                           //                           Eigen::Matrix3d S0, S1, St,VSt;
+                           //                           S0.setZero();
+                           //                           S1.setZero();
+                           //                           S0(0,0) = R0.col(0).norm();
+                           //                           S0(1,1) = R0.col(1).norm();
+                           //                           S0(2,2) = R0.col(2).norm();
+                           //                           S1(0,0) = R1.col(0).norm();
+                           //                           S1(1,1) = R1.col(1).norm();
+                           //                           S1(2,2) = R1.col(2).norm();
+                           //                           St = S1 + (1.0-tt)*(S0-S1);
+                           //                           // rotation
+                           //
+                           //                           R0 = R0*S0.inverse();
+                           //                           R1 = R1*S1.inverse();
+                           //                           Eigen::Quaterniond q0(R0);
+                           //
+                           //                           Eigen::Quaterniond q1(R1);
+                           //                           q1.normalize();
+                           //                           q0.normalize();
+                           //                           Eigen::Quaterniond qt = q0.slerp(tt,q1);
+                           //                           Rt = qt.toRotationMatrix();
+                           //                           if (q0.dot(q1) < 0) {
+                           //                               q1.coeffs() = -q1.coeffs();
+                           //                           }
+                           //                           Eigen::Quaterniond qs = q0.conjugate() * q1;
+                           //                           Eigen::Quaterniond qvt = qt * logq(qs);
+                           //
+                           //
+                           //                           double qr, qi, qj, qk;
+                           //                           Eigen::Matrix3d Rr, Ri, Rj, Rk;
+                           //                           qr = qt.w();
+                           //                           qi = qt.x();
+                           //                           qj = qt.y();
+                           //                           qk = qt.z();
+                           //                           Rr << 0, -2*qk, 2*qj,
+                           //                           2*qk, 0, -2*qi,
+                           //                           -2*qj, 2*qi, 0;
+                           //                           Rk << -4*qk, -2*qr, 2*qi,
+                           //                           2*qr, -4*qk, 2*qj,
+                           //                           2*qi, 2*qj, 0;
+                           //                           Rj << -4*qj, 2*qi, 2*qr,
+                           //                           2*qi, 0, 2*qk,
+                           //                           -2*qr, 2*qk, -4*qj;
+                           //                           Ri << 0, 2*qj, 2*qk,
+                           //                           2*qj, -4*qi, -2*qr,
+                           //                           2*qk, 2*qr, -4*qi;
+                           //                           VRt = Rr*qvt.w() + Ri*qvt.x() + Rj*qvt.y() + Rk*qvt.z();
+                           //                           VRt = VRt / tau;
+                           //                           VSt = (S1-S0)/tau;
+                           //
+                           //                           // Scaling
+                           //                           Rt = Rt * St;
+                           //                           VRt = VRt * St + Rt * VSt;
                            
                            
                            // cool trajectory hack (uncomment to hack trajectory)
@@ -169,8 +169,8 @@ void swept_volume(const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Ei
                            //                           VRt << -5.*sin(5.*t), 5.*cos(5.*t), 0.0,
                            //                                  -5.*cos(5.*t), -5.*sin(5.*t), 0.0,
                            //                                  0.0, 0.0, 0.0;
-                           trajBezier(t, xt, vt);
-                           trajLineRot3D(t, Rt, VRt, 0);
+                           trajLine3D2(t, xt, vt);
+                           trajLineRot3D(t, Rt, VRt, 2);
                            return true;
                        };
     
@@ -193,7 +193,7 @@ void swept_volume(const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Ei
         t_start += diff;
         return diff;
     };
-   
+    
     
     
     std::vector<Eigen::RowVector3d> debug_vec;
@@ -210,14 +210,60 @@ void swept_volume(const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Ei
         Eigen::RowVector4d inputs;
         inputs.head<3>() = P;
         std::function<double(const double)> f = [&](const double t)->double{
-            inputs(3) = t;
-            return sphereLoopDLoop(inputs).first;
+            int i;
+            double s,sqrd,sqrd2,s2;
+            Eigen::Matrix3d VRt,Rt;
+            Eigen::RowVector3d xt,vt,pos,c,c2;
+            interpolate_position(t,xt,vt,Rt,VRt);
+            
+            pos = ((Rt.inverse())*((P - xt).transpose())).transpose();
+            // fast winding number
+            Eigen::VectorXd w;
+            igl::fast_winding_number(fwn_bvh,2.0,pos,w);
+            s = 1.-2.*w(0);
+            //running_sign = s;
+            //double ub = (pos-running_closest_point) * (pos-running_closest_point).transpose();
+            sqrd = tree.squared_distance(V,F,pos,i,c);
+            distance_queries = distance_queries + 1;
+            //return sgn(s)*sqrt(sqrd) - 0.0;
+            //return s*(c-pos).lpNorm<1>();
+            return s*sqrt(sqrd) - iso;
+            //return inigo_example(pos,0.0);
         };
         
         // Gradient of f
         std::function<double(const double)> gf = [&](const double t)->double{
-            inputs(3) = t;
-            return sphereLoopDLoop(inputs).second(3);
+            int i;
+            double s,sqrd,sqrd2,s2;
+            Eigen::Matrix3d VRt,Rt;
+            Eigen::RowVector3d xt,vt,pos,c,c2,point_velocity;
+            //            xt = position(t);
+            //            vt = velocity(t);
+            //            Rt = rotation(t);
+            //            VRt = rotational_velocity(t);
+            interpolate_position(t,xt,vt,Rt,VRt);
+            //pos = ((Rt.transpose())*((P - xt).transpose())).transpose();
+            pos = ((Rt.inverse())*((P - xt).transpose())).transpose();
+            // slow winding number
+            //signed_distance_winding_number(tree,V,F,hier,pos,s,sqrd,i,c);
+            // fast winding number
+            Eigen::VectorXd w;
+            igl::fast_winding_number(fwn_bvh,2.0,pos,w);
+            s = 1.-2.*w(0);
+            running_sign = s;
+            //double ub = (pos-running_closest_point) * (pos-running_closest_point).transpose();
+            sqrd = tree.squared_distance(V,F,pos,i,c);
+            //            if(running_sign>0){
+            //                sqrd = tree.squared_distance(V,F,pos,0.0,ub,i,c);
+            //            }else{
+            //                sqrd = tree.squared_distance(V,F,pos,ub,10.0,i,c);
+            //            }
+            running_closest_point = c;
+            
+            Eigen::RowVector3d cp = c-pos;
+            cp.normalize();
+            point_velocity = (-Rt.inverse()*VRt*Rt.inverse()*(P.transpose() - xt.transpose()) - Rt.inverse()*vt.transpose()).transpose();
+            return (-s)*cp.dot(point_velocity);
         };
         
         // Run gradient descent
@@ -233,8 +279,6 @@ void swept_volume(const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Ei
         time_seed = seed; // updates seed so that we can add it to the queue in the next voxel
         return distance;
     };
-    
-    
     // // std::cout << "CHANGE THE THING!" << std::endl;
     
     
@@ -310,11 +354,11 @@ void swept_volume(const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Ei
     tictoc();
     sparse_continuation(p0,init_voxels,init_times,scalarFunc,eps,1000000,CS,CV,CI,CV_argmins);
     std::cout << "Continuation took "<< tictoc() <<" second(s)."<< std::endl;
-     std::cout << "Number of (unique) vertices: " << CV.rows() << std::endl;
-     std::cout << "Gradient descent queries: " << grad_descent_queries << std::endl;
-     std::cout << "Gradient descent queries per vertex: " << ((double) grad_descent_queries)/( (double) CV.rows()) << std::endl;
-     std::cout << "Distance queries: " << distance_queries << std::endl;
-     std::cout << "Distance queries per vertex: " << ((double) distance_queries)/( (double) CV.rows()) << std::endl;
+    std::cout << "Number of (unique) vertices: " << CV.rows() << std::endl;
+    std::cout << "Gradient descent queries: " << grad_descent_queries << std::endl;
+    std::cout << "Gradient descent queries per vertex: " << ((double) grad_descent_queries)/( (double) CV.rows()) << std::endl;
+    std::cout << "Distance queries: " << distance_queries << std::endl;
+    std::cout << "Distance queries per vertex: " << ((double) distance_queries)/( (double) CV.rows()) << std::endl;
     Eigen::MatrixXd input_data,output_data;
     input_data.resize(CV_argmins.size(),5);
     //input_data.col(0) = CV_argmins;
@@ -346,8 +390,8 @@ void swept_volume(const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Ei
     Eigen::MatrixXd Umc;
     Eigen::MatrixXi Gmc;
     igl::copyleft::marching_cubes(CS,CV,CI,0.0,U,G); // our mesh
-
-
+    
+    
     igl::writeOBJ(dir_name + "/input.obj",V,F);
     igl::writeOBJ(dir_name + "/silvia_" + eps_str + ".obj",U,G);
 }

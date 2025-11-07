@@ -31,9 +31,9 @@ void trajLine3D(double t, Eigen::RowVector3d& xt, Eigen::RowVector3d& vt) {
 
 void trajLine3D2(double t, Eigen::RowVector3d& xt, Eigen::RowVector3d& vt) {
     // Define the fixed vectors
-    Eigen::RowVector3d start(0.01, 0.01, 0.0);
-    Eigen::RowVector3d end(0.0, 0.01, 0.51);
-    Eigen::RowVector3d offset(0.5, 0.5, 0.25);
+    Eigen::RowVector3d start(-0.11, 0.01, 0.0);
+    Eigen::RowVector3d end(0.61, 0.01, 0.01);
+    Eigen::RowVector3d offset(0.25, 0.5, 0.5);
     
     // Compute the linear interpolation and add the offset
     xt = (1.0 - t) * start + t * end + offset;
