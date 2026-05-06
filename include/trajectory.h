@@ -40,6 +40,17 @@ void trajLine3D2(double t, Eigen::RowVector3d& xt, Eigen::RowVector3d& vt) {
     vt = end - start;
 }
 
+void trajTet(double t, Eigen::RowVector3d& xt, Eigen::RowVector3d& vt) {
+    // Define the fixed vectors
+    Eigen::RowVector3d start(0.01, 0.01, 0.0);
+    Eigen::RowVector3d end(0.51, 0.0, 0.01);
+    Eigen::RowVector3d offset(0.25, 0.5, 0.5);
+    
+    // Compute the linear interpolation and add the offset
+    xt = (1.0 - t) * start + t * end + offset;
+    vt = end - start;
+}
+
 void trajBezier(double t, Eigen::RowVector3d& xt, Eigen::RowVector3d& vt) {
     // Compute position values
     xt(0) = 0.175 + 4 * (1 - t) * (1 - t) * t - 2 * (1 - t) * t * t + (2.0 / 3.0) * t * t * t;
@@ -50,6 +61,22 @@ void trajBezier(double t, Eigen::RowVector3d& xt, Eigen::RowVector3d& vt) {
     vt(0) = 4 * (1 - t) * (1 - t) - 12 * (1 - t) * t + 4 * t * t;
     vt(1) = 2 * (1 - t) * (1 - t) - 2 * t * t;
     vt(2) = 0.0; // No velocity change in the z-direction
+}
+
+void trajTet(double t, Eigen::Matrix3d& Rt, Eigen::Matrix3d& VRt, const int rotNum) {
+    const Scalar pi = 3.14159;
+    // Compute sine and cosine of theta
+    double cosTheta = std::cos(t * rotNum * pi);
+    double sinTheta = std::sin(t * rotNum * pi);
+    double dTheta_dt = rotNum * pi;
+    // Rotation matrix Rz(theta)
+    Rt << cosTheta, -sinTheta, 0,
+    sinTheta,  cosTheta, 0,
+    0,        0,        1;
+    
+    VRt << -sinTheta * dTheta_dt, -cosTheta * dTheta_dt, 0,
+    cosTheta * dTheta_dt, -sinTheta * dTheta_dt, 0,
+    0,        0,        0;
 }
 
 void trajLineRot3D(double t, Eigen::Matrix3d& Rt, Eigen::Matrix3d& VRt, const int rotNum) {
